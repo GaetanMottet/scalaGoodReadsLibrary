@@ -10,44 +10,32 @@ import scala.io.Source
 def main(): Unit = {
   println("Hello world!")
 
-  val spark = SparkSession
-    .builder()
-    .appName("scalaGoodReadsLibrary")
-//    .config("spark.some.config.option", "some-value")
-    .getOrCreate()
+  val authors = new ListBuffer[Author]()
+  val books = new ListBuffer[Book]()
 
-  //https://www.projectpro.io/recipes/handle-comma-column-value-of-csv-file-while-reading-spark-scala
+  val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
+  for (line <- bufferedSource.getLines) {
+    val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
+    // do whatever you want with the columns here
+    val author = Author(cols(2)) //using companion class Author
+    if (!authors.contains(author.name)) then
+      authors += author //new Author(cols(2))
 
-  val dataReader = spark.read
-    .format("csv")
-    .option("header", "true")
-    .option("escapeQuotes", "true")
-    .load("dataSource/03-GoodreadsLibraryExport.csv")
+    val book = Book(cols(1),cols(0), author) //using companion class Author
+    if (!books.contains(book.bookId)) then
+      books += book
+  }
 
-  dataReader.show()
+  authors.toList
+  books.toList
 
-//  val authors = new ListBuffer[Author]()
-//  val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
-//  for (line <- bufferedSource.getLines.drop(1)) {
-//    for (line <- dataReader.map()) {
-//      val cols = line.split(",").map(_.trim)
-      //col(0) = Book Id, col(1)=title, col(2) = author
-      //    println(s"${cols(0)}|${cols(1)}|${cols(2)}|${cols(3)}")
-      //
-      //    val author = Author(cols(2)) //using companion class Author
-      //    if(!authors.contains(author.name)) then
-      //      authors += author//new Author(cols(2))
-      //
-//    }
+  //print each author
+  for i <- authors
+    do println(i.name)
 
+  //print each author
+  for i <- books
+    do println(i.title)
 
-//  authors.toList
-//
-//  //print each author
-//  for i <- authors
-//    do println(i.name)
-//
-//
-//  dataReader.close;
-
+  bufferedSource.close
 }
