@@ -26,15 +26,15 @@ def main(): Unit = {
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
     // do whatever you want with the columns here
-    val author = Author(cols(2)) //using companion class Author
+    val author = Author(cols(2))
     if (!authorsTemp.contains(author.name)) then
       authorsTemp += author.name
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
 
-    val book = Book(cols(0),cols(5),cols(1), null,null,cols(9),cols(13),counter,rating,null)
-    book.addAuhtor(author)
+    var book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
+//    book.addAuhtor(author)
     book.storeOnShelf(cols(18))
 
     if (!booksTemp.contains(book.idBook)) then
@@ -56,7 +56,7 @@ def main(): Unit = {
   println("number of books : " +booksTemp.length)
   //print each book
   for i <- booksTemp
-    do println(i.exclusiveShelf)
+    do println("Title: " +i.title +" from " +i.author.name.toUpperCase + " // Red " +i.readCount +"x.")
 
   bufferedSource.close
 }
