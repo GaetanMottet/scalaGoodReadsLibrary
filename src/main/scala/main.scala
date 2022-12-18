@@ -18,45 +18,62 @@ def main(): Unit = {
     }
   }
 
-  val authorsTemp = new ListBuffer[String]() //instead of ..[Author]()
+  val authorsNameTemp = new ListBuffer[String]() //instead of ..[Author]()
+  val authorsListTemp = new ListBuffer[Author]()
   val booksTemp = new ListBuffer[Book]()
+  var reuseAuthorCounter = 0;
 
   val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
 
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
-    // do whatever you want with the columns here
-    val author = Author(cols(2))
-    if (!authorsTemp.contains(author.name)) then
-      authorsTemp += author.name
+
+    val authorName = cols(2)
+    var author = new Author("")
+    if (!authorsNameTemp.contains(authorName)) then {
+      authorsNameTemp += authorName
+      author = Author(authorName)
+      authorsListTemp += author
+    } else reuseAuthorCounter+=1
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
 
-    var book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
-//    book.addAuhtor(author)
-    book.storeOnShelf(cols(18))
+    val book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
+//    book.addAuthor(author)
+    var bookExt = book.storeOnShelf(cols(18))
 
     if (!booksTemp.contains(book.idBook)) then
-      booksTemp += book
+      booksTemp += bookExt
   }
 
-  authorsTemp.toList
+  authorsNameTemp.toList
   booksTemp.toList
 
   //build a list of authors without duplicates
-  val authors = authorsTemp.toList
+  val authors = authorsListTemp.toList
+
+  for i<-authors do {
+    var countName = 0;
+    if(authors.contains(i.name)) then countName+=1
+    if(countName > 1) then println("ERROR : Duplicated author !")
+  }
 
   //print each author
 //  for i <- authors
 //    do println(i)
 
-  println("authorsTemp.length :  " +authorsTemp.length)
+  println("authorsNameTemp.length :  " +authorsNameTemp.length)
   println("authors.length : " +authors.length)
   println("number of books : " +booksTemp.length)
+  println("ReuseCounter : " +reuseAuthorCounter)
   //print each book
   for i <- booksTemp
-    do println("Title: " +i.title +" from " +i.author.name.toUpperCase + " // Red " +i.readCount +"x.")
+    do println("Title: " +i.title +" from " +i.author.name.toUpperCase + ", stored on shelf : "+i.exclusiveShelf +", red " +i.readCount +"x.")
+
+  //print all authors (objects)
+//  for i <- authors
+//    do println(i)
 
   bufferedSource.close
 }
