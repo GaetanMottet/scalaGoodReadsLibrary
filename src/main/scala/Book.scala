@@ -1,6 +1,28 @@
+import Author.*
+import org.apache.hadoop.util.Options.IntegerOption
+import shaded.parquet.it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
+case class Book(idBook: String, isbn: String, title: String, author: Author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher: String, originalPublicYear: String, readCount: Int, myRating: Int, exclusiveShelf:BookShelf)
 
-class Book(val title: String, val bookId: String, author: Author)
+implicit class BookExt(b:Book):
+  def addAuhtor(a:Author) =
+    b.copy(author = a)
+  def addCoAuthor(ca:CoAuthor) =
+    b.copy(coAuthors = b.coAuthors :+ ca)
 
-object Book:
-  def apply(title:String, bookId:String, author: Author) = new Book(title,bookId, author)
+  def incrementReadCount() =
+    b.copy(readCount = b.readCount+1)
+
+  def evaluate(rate:Int) =
+    b.copy(myRating = rate)
+
+  def selectShelf(shelf:String) =
+  shelf match {
+    case "to-read" => BookShelf.toRead
+    case "currently-reading" => BookShelf.currentlyReading
+    case "read" => BookShelf.read
+    case "dnf" => BookShelf.dnf
+    case _ => BookShelf.undefined
+  }
+  def storeOnShelf(shelf:String) =
+    b.copy(exclusiveShelf = selectShelf(shelf))
