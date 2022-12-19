@@ -34,11 +34,7 @@ def main(): Unit = {
       authorsNameTemp += authorName
       author = Author(authorName)
       authorsListTemp += author
-    } else {
-      var index = authorsListTemp.indexOf(Author(authorName))
-      authorsListTemp(index).nbBooks + 1
-//      println("nbBooks for " +authorsListTemp(index) +" = " +authorsListTemp(index).nbBooks)
-    } //reuseAuthorCounter+=1
+    }
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
@@ -85,9 +81,7 @@ def main(): Unit = {
 //    do println("Book: " +i.title +" from " +i.author.name.toUpperCase + ", stored on shelf: '"+i.exclusiveShelf +"', red " +i.readCount +"x.")
 
   //print all authors (objects)
-  for i <- authors
-    do { if(i.nbBooks != 0) then println(i)
-    }
+
 
   bufferedSource.close
 }
