@@ -47,8 +47,10 @@ def main(): Unit = {
       booksTemp += bookExt
   }
 
+  bufferedSource.close
+  
   authorsNameTemp.toList
-  booksTemp.toList
+  booksTemp.toSeq
 
   //build a list of authors without duplicates
   val authors = authorsListTemp.toSeq
@@ -81,7 +83,6 @@ def main(): Unit = {
 //    do println("Book: " +i.title +" from " +i.author.name.toUpperCase + ", stored on shelf: '"+i.exclusiveShelf +"', red " +i.readCount +"x.")
 
   //print all authors (objects)
+  
 
-
-  bufferedSource.close
 }
