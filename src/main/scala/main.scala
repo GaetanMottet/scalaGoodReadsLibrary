@@ -1,5 +1,5 @@
 
-import org.apache.spark.{SparkConf,SparkContext}
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 
 import scala.collection.mutable.ListBuffer
@@ -34,7 +34,11 @@ def main(): Unit = {
       authorsNameTemp += authorName
       author = Author(authorName)
       authorsListTemp += author
-    } else reuseAuthorCounter+=1
+    } else {
+      var index = authorsListTemp.indexOf(Author(authorName))
+      authorsListTemp(index).nbBooks + 1
+//      println("nbBooks for " +authorsListTemp(index) +" = " +authorsListTemp(index).nbBooks)
+    } //reuseAuthorCounter+=1
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
@@ -51,12 +55,21 @@ def main(): Unit = {
   booksTemp.toList
 
   //build a list of authors without duplicates
-  val authors = authorsListTemp.toList
+  val authors = authorsListTemp.toSeq
 
-  for i<-authors do {
-    var countName = 0;
-    if(authors.contains(i.name)) then countName+=1
-    if(countName > 1) then println("ERROR : Duplicated author !")
+  val authorsControl = authors.groupBy(identity).map{
+    case(key,value) => (key, value.length)
+  }
+
+  var errorCount = 0
+  for (i<-authorsControl) {
+    if(i._2 > 1) then  {
+      println("Error for " +i._1 +", (s)he is duplicated " +i._2 +"x")
+      errorCount += 1
+    }
+  }
+  if (errorCount == 0) then {
+    println("No duplicate found")
   }
 
   //print each author
@@ -68,12 +81,13 @@ def main(): Unit = {
   println("number of books : " +booksTemp.length)
   println("ReuseCounter : " +reuseAuthorCounter)
   //print each book
-  for i <- booksTemp
-    do println("Title: " +i.title +" from " +i.author.name.toUpperCase + ", stored on shelf : "+i.exclusiveShelf +", red " +i.readCount +"x.")
+//  for i <- booksTemp
+//    do println("Book: " +i.title +" from " +i.author.name.toUpperCase + ", stored on shelf: '"+i.exclusiveShelf +"', red " +i.readCount +"x.")
 
   //print all authors (objects)
-//  for i <- authors
-//    do println(i)
+  for i <- authors
+    do { if(i.nbBooks != 0) then println(i)
+    }
 
   bufferedSource.close
 }
