@@ -47,9 +47,9 @@ def main(): Unit = {
     if !authorsNameTemp.contains(authorName) then authorsNameTemp += authorName
 
 
-//    val publisherName = cols(9)
-//    //if this publisher's name doesn't exist, then add it to the publishersNameTemp
-//    if !publishersNameTemp.contains(publisherName) then publishersNameTemp += publisherName
+    val publisherName = cols(9)
+    //if this publisher's name doesn't exist, then add it to the publishersNameTemp
+    if !publishersNameTemp.contains(publisherName) then publishersNameTemp += publisherName
 
   }
   bufferedSource.close // even if it is not closed, it seems not to be reusable later in the code. So might as well close it...
@@ -73,10 +73,14 @@ def main(): Unit = {
   }
 
 //   1 c. Same as authors but for publishers
-//  publishersNameTemp.toList
+ publishersNameTemp.toList
 //
-//  val publishersList = new ListBuffer[Publisher]()
-
+  val publishersListBuffer = new ListBuffer[BookPublisher]()
+  for (i <- publishersNameTemp) {
+    val publisher = BookPublisher(i)
+    publishersListBuffer.addOne(publisher)
+  }
+  val publisherList = publishersListBuffer.toList
 
 /*
 * Create the list of books
