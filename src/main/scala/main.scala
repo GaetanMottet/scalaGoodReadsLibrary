@@ -41,6 +41,7 @@ def main(): Unit = {
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
 
+    //Check null here ??
     val authorName = cols(2)
     //if this author's name doesn't exist, then add it to the authorsNameTemp
     if !authorsNameTemp.contains(authorName) then authorsNameTemp += authorName
@@ -119,7 +120,7 @@ def main(): Unit = {
   //looking for a specific book
   println("======================= Books with title containing 'Double Trouble' =======================")
   val title = "Double Trouble"
-  val booksWithTitle = GoodReadsLibraryService.bookByTitle(title, bookList)
+  val booksWithTitle = ServiceExploration.bookByTitle(title, bookList)
   for i <-booksWithTitle do {
     println(i)
   }
@@ -127,7 +128,7 @@ def main(): Unit = {
   //looking for a book according to its author's name
   println("======================= Books from Franklin W. Dixon =======================")
   val authorName = "Franklin W. Dixon"
-  val books = GoodReadsLibraryService.booksFromAuthor(authorName, bookList)
+  val books = ServiceExploration.booksFromAuthor(authorName, bookList)
   for i <- books do {
     println(i.title +" from " +i.author)
   }
