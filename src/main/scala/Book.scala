@@ -2,7 +2,7 @@ import Author.*
 import org.apache.hadoop.util.Options.IntegerOption
 import shaded.parquet.it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
-case class Book(idBook: String, isbn: String, title: String, author: Author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher: String, originalPublicYear: String, readCount: Int, myRating: Int, exclusiveShelf:BookShelf)
+case class Book(idBook: String, isbn: Option[String], title: String, author: Author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher: Option[String], originalPublicYear: Option[String], readCount: Int, myRating: Int, exclusiveShelf: BookShelf)
 
 implicit class BookExt(b:Book):
   def addAuhtor(a:Author) =

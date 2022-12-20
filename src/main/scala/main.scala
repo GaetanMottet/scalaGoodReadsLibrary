@@ -89,7 +89,7 @@ def main(): Unit = {
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
-    val authorName = cols(2)
+    var authorName = cols(2)
     if(cols(2).equals(" ")) then println("LDJKFASDFASD")
 
     //get the author in authorList, according to his/her name
@@ -98,11 +98,11 @@ def main(): Unit = {
       if i.name.contains(authorName) then {
         author = i
         addWrittenBookTo(author)
-//        i.nbBooks += 1 // increments the number of written books for this author
+        //        i.nbBooks += 1 // increments the number of written books for this author
       }
     }
-    //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
-    val book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
+    //book constructor : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
+    val book = Book(cols(0),Some(cols(5)),cols(1), author,null,Some(cols(9)),Some(cols(13)),counter,rating,null)
     //add the shelf
     var bookExt = book.storeOnShelf(cols(18))
 
@@ -126,7 +126,7 @@ def main(): Unit = {
 
   //looking for a book according to its author's name
   println("======================= Books from Franklin W. Dixon =======================")
-  val authorName = "Franklin W. Dixon"
+  var authorName = "Franklin W. Dixon"
   val books = GoodReadsLibraryService.booksFromAuthor(authorName, bookList)
   for i <- books do {
     println(i.title +" from " +i.author)
