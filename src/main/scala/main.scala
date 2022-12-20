@@ -41,14 +41,15 @@ def main(): Unit = {
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
 
+    //Check null here ??
     val authorName = cols(2)
     //if this author's name doesn't exist, then add it to the authorsNameTemp
     if !authorsNameTemp.contains(authorName) then authorsNameTemp += authorName
 
 
-//    val publisherName = cols(9)
-//    //if this publisher's name doesn't exist, then add it to the publishersNameTemp
-//    if !publishersNameTemp.contains(publisherName) then publishersNameTemp += publisherName
+    val publisherName = cols(9)
+    //if this publisher's name doesn't exist, then add it to the publishersNameTemp
+    if !publishersNameTemp.contains(publisherName) then publishersNameTemp += publisherName
 
   }
   bufferedSource.close // even if it is not closed, it seems not to be reusable later in the code. So might as well close it...
@@ -72,10 +73,14 @@ def main(): Unit = {
   }
 
 //   1 c. Same as authors but for publishers
-//  publishersNameTemp.toList
+ publishersNameTemp.toList
 //
-//  val publishersList = new ListBuffer[Publisher]()
-
+  val publishersListBuffer = new ListBuffer[BookPublisher]()
+  for (i <- publishersNameTemp) {
+    val publisher = BookPublisher(i)
+    publishersListBuffer.addOne(publisher)
+  }
+  val publisherList = publishersListBuffer.toList
 
 /*
 * Create the list of books
@@ -89,7 +94,7 @@ def main(): Unit = {
 
     val rating = myToInt(cols(7))
     val counter = myToInt(cols(22))
-    var authorName = cols(2)
+    val authorName = cols(2)
     if(cols(2).equals(" ")) then println("LDJKFASDFASD")
 
     //get the author in authorList, according to his/her name
@@ -98,11 +103,11 @@ def main(): Unit = {
       if i.name.contains(authorName) then {
         author = i
         addWrittenBookTo(author)
-        //        i.nbBooks += 1 // increments the number of written books for this author
+//        i.nbBooks += 1 // increments the number of written books for this author
       }
     }
-    //book constructor : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
-    val book = Book(cols(0),Some(cols(5)),cols(1), author,null,Some(cols(9)),Some(cols(13)),counter,rating,null)
+    //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
+    val book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
     //add the shelf
     var bookExt = book.storeOnShelf(cols(18))
 
@@ -119,15 +124,15 @@ def main(): Unit = {
   //looking for a specific book
   println("======================= Books with title containing 'Double Trouble' =======================")
   val title = "Double Trouble"
-  val booksWithTitle = GoodReadsLibraryService.bookByTitle(title, bookList)
+  val booksWithTitle = ServiceExploration.bookByTitle(title, bookList)
   for i <-booksWithTitle do {
     println(i)
   }
 
   //looking for a book according to its author's name
   println("======================= Books from Franklin W. Dixon =======================")
-  var authorName = "Franklin W. Dixon"
-  val books = GoodReadsLibraryService.booksFromAuthor(authorName, bookList)
+  val authorName = "Franklin W. Dixon"
+  val books = ServiceExploration.booksFromAuthor(authorName, bookList)
   for i <- books do {
     println(i.title +" from " +i.author)
   }
