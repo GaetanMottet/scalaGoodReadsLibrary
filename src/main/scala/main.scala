@@ -107,7 +107,7 @@ def main(): Unit = {
       }
     }
     //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
-    val book = Book(cols(0),cols(5),cols(1), author,null,cols(9),cols(13),counter,rating,null)
+    val book = Book(cols(0),Some(cols(5)),cols(1), author,null,Some(cols(9)),Some(cols(13)),counter,rating,null)
     //add the shelf
     var bookExt = book.storeOnShelf(cols(18))
 

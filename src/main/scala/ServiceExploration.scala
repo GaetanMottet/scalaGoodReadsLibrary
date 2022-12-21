@@ -1,4 +1,4 @@
-object GoodReadsLibraryService {
+object ServiceExploration {
   def booksFromAuthor(a:String, l:List[Book])=
     l.filter(x => x.author.name.contains(a))
 
