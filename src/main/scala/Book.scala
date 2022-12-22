@@ -3,13 +3,13 @@ import BookShelf._
 import org.apache.hadoop.util.Options.IntegerOption
 import shaded.parquet.it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
-case class Book(idBook: String, isbn: Option[String], title: String, author: Author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher: BookPublisher, originalPublicYear: Option[String], var readCount: Int, var myRating: Int, var exclusiveShelf: BookShelf)
+case class Book(idBook: String, isbn: Option[String], title: String, author: Author,  publisher: BookPublisher, originalPublicYear: Option[String], var readCount: Int, var myRating: Int, var exclusiveShelf: BookShelf){
+  override def toString: String = {
+    s"ID = $idBook, ISBN = ${isbn.getOrElse("")}, TITLE = $title, AUTHOR = ${author.name}, PUBLISHER = ${publisher.name}, PUBLICATION YEAR = ${originalPublicYear.getOrElse("")}, TIMES READ = $readCount, RATING = $myRating, IS ON THE SHELF = $exclusiveShelf"
+  }
+}
 
 implicit class BookExt(b:Book):
-  def addAuhtor(a:Author) =
-    b.copy(author = a)
-  def addCoAuthor(ca:CoAuthor) =
-    b.copy(coAuthors = b.coAuthors :+ ca)
 
   def selectShelf(shelf:String) =
   shelf match {

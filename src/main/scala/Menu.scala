@@ -11,22 +11,7 @@ object Menu {
     println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
     println("\nWhat do you want to do ?")
-
-    //options :
-    /* 'Exploration of your library'
-       1. Search for a single book by its title (can be a partial title)
-       2. Search for all books by partial title (can be a list of books)
-       3. Search for all books from a specific author
-       4. Search for all books you've read, by specific author
-       5. Display the list of your books, sort by your rating
-       6. Display the list of your books by a specific shelf
-       'Operations on your library'
-       7. Add a book
-       8. Calculate and display the average rating of books you have read
-       9. Increment the number of time you have read a specific book
-      10. Modify your rating of a book
-      11. Change the shelf of a book
-    * */
+    
     val options = Map(
       1 -> " 1. Search for a single book by its title (can be a partial title)",
       2 -> " 2. Search for all books by partial title (can be a list of books)",
@@ -44,10 +29,10 @@ object Menu {
 
     //display the menu's options
     for o <- options.toSeq.sortBy(_._1) do println(o._2)
-    //user's answer
+    //Manage the user's answer and do the action choosed
     val rep = StdIn.readLine()
       rep match {
-        case "1" => println("Your book : " + searchBookByTitle(library))
+        case "1" => println("Your book : " + searchBookByTitle(library).toString)
         case "2" => searchBooksByTitle(library)
         case "3" => searchBooksByAuthor(library)
         case "4" => searchReadBooksByAuthor(library)
@@ -68,44 +53,53 @@ object Menu {
     displayMenu(library)
   }
 
-  def searchBookByTitle(library: Library): Book = {
+  //Method to search for a specific book by it's title
+  private def searchBookByTitle(library: Library): Book = {
     println("Enter the title of a book (can be partial)")
     val rep = StdIn.readLine()
     val book = ServiceExploration.bookByTitle(rep, library)
     book
 }
 
-  def searchBooksByTitle(library: Library) = {
+  //Method to search for books by title
+  private def searchBooksByTitle(library: Library) = {
     println("Enter the title of a book (can be partial)")
     val rep = StdIn.readLine()
     val books = ServiceExploration.booksByTitle(rep, library)
     println("Your books : ")
-    for b <- books do println(b)
+    for b <- books do println(b.toString)
   }
 
-  def searchBooksByAuthor(library: Library): Unit = {
+  //Method to search for books for one author
+  private def searchBooksByAuthor(library: Library): Unit = {
     println("Enter the name of the author you are looking for")
     val rep = StdIn.readLine()
     val books = ServiceExploration.booksFromAuthor(rep, library)
     println("Your books : ")
-    for b <- books do println(b)
+    for b <- books do println(b.toString)
   }
 
-  def searchReadBooksByAuthor(library: Library): Unit = {
+  //Method to search how many book i've read for a specific author
+  private def searchReadBooksByAuthor(library: Library): Unit = {
     println("Enter the name of the author you are looking for")
     val rep = StdIn.readLine()
     val nbBooks = ServiceExploration.readBooksFromAuthor(rep, library)
     println("Number of read books : " +nbBooks)
+    
+    val totalBooks = ServiceExploration.booksFromAuthor(rep,library).length
+    println("Number total of books for the author "+rep+" : " +totalBooks)
   }
 
-  def incrementBookReadCounter(library: Library): Unit = {
+  //Method to search for a specific book and change hpw many time we have read it
+  private def incrementBookReadCounter(library: Library): Unit = {
     //1. Search a book
     val book = searchBookByTitle(library)
     //2. Increment the read counter
     ServiceOperations.incrementReadCount(book)
   }
 
-  def modifyRating(library: Library): Unit = {
+  //Method to search for a specific book and change it's rating
+  private def modifyRating(library: Library): Unit = {
     //1. Search a book
     val book = searchBookByTitle(library)
     //2. modify rating
@@ -113,9 +107,15 @@ object Menu {
     //3. print the book
     println("the new rating is "+book.myRating +" for " +book)
   }
+  
+  //Method to quit the program
+  private def finish(): Unit = {
 
-  def finish(): Unit = {
-    println("Bye bye ! Thanks for your trust")
+    println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    println("         Bye bye ! Thanks for your trust           ")
+    println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     System.exit(0)
   }
 

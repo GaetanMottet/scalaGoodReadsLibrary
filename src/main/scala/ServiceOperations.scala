@@ -2,9 +2,9 @@ import java.time.Year
 import scala.io.StdIn
 
 object ServiceOperations {
-   // add a book
+   // add a book to the library
    def addBook(lb:Library): Book ={
-     // 0. TO DO : method to create new book by asking information to the user, step by step ?
+     // 0. method to create new book object by asking information to the user, step by step
      val b = createBook (lb)
      //a. Add author to authorsList
      val newAuthorsList = lb.authorsList :+ b.author
@@ -18,6 +18,8 @@ object ServiceOperations {
 
      b
    }
+
+   //Ask to the user the book's details
    def createBook(l: Library): Book = {
      println("Enter the id of your book :")
      val idBook = StdIn.readLine()
@@ -38,7 +40,6 @@ object ServiceOperations {
      //check publisher
      val publisher = l.checkPublisher(publisherName)
 
-
      // Get publication Year
      var publicYear = ""
      var valid = false
@@ -47,7 +48,7 @@ object ServiceOperations {
        try {
          val num = StdIn.readInt()
          publicYear = num.toString
-
+         //Check the year entered is  before this year
          val yearToCheck = Year.of(num)
          yearToCheck.isBefore(Year.now())
          if (yearToCheck.isBefore(Year.now())) {
@@ -55,7 +56,6 @@ object ServiceOperations {
          } else {
            println("Please enter a valid year (before now)")
          }
-
        } catch {
          case e: NumberFormatException => println("Invalid input. Please enter a year.")
        }
@@ -77,23 +77,23 @@ object ServiceOperations {
      val myRating = askForModifyRating()
 
      //Get the shelf where to put the book
-
-
      // match case by user's choice
     val exclusiveShelf = choosenShelf("Enter the shelf where to put your book :")
 
-    val b = Book(idBook: String, Option(isbn), title, author, null, publisher, Option(publicYear), readCount, myRating, exclusiveShelf)
+    val b = Book(idBook: String, Option(isbn), title, author, publisher, Option(publicYear), readCount, myRating, exclusiveShelf)
 
      //add book to author and publisher
-  addWrittenBookTo(author)
-  addPublishedBookTo(publisher)
+     author.nbBooks += 1
+
+     //addWrittenBookTo(author)
+     addPublishedBookTo(publisher)
 
      println(b.title + " has been created correctly.")
     l.listBooks = l.listBooks :+ b
     b
    }
 
-   //moyenne des MyRatings
+   //Average of MyRatings
    def avgMyRatings(l: Library): Double = {
      val listBooks = l.listBooks.filter(_.readCount > 0)
      val myRatings = listBooks.map(b => b.myRating)
@@ -101,6 +101,7 @@ object ServiceOperations {
      ((x:Double) => x/listBooks.length)(sum)
    }
 
+  //Method to retrive the right enum according to the string given
   def choosenShelf(question: String): BookShelf = {
 
     println(question)
@@ -112,7 +113,6 @@ object ServiceOperations {
     println("E. " + BookShelf.undefined)
 
     val shelfString = StdIn.readLine()
-
     shelfString.toUpperCase() match {
       case "A" => BookShelf.toRead
       case "B" => BookShelf.currentlyReading
@@ -122,9 +122,7 @@ object ServiceOperations {
     }
   }
 
-
-
-   //augmenter readCount
+   //Increase readCount of the chosen book
    def incrementReadCount(b: Book) = {
      b.readCount += 1
      println("The book '" +b.title + " has been read " +b.readCount)
@@ -136,7 +134,8 @@ object ServiceOperations {
      }
      println("The book '" +b.title + " has been read " +b.readCount +" time(s) and has a rate of " +b.myRating)
    }
-   //Modify MyRating
+
+   //Modify MyRating of one book
    def askForModifyRating(): Int = {
      var myRatingToCheck = -1
      while (myRatingToCheck < 0 || myRatingToCheck > 5) {
@@ -157,18 +156,18 @@ object ServiceOperations {
     println(filteredList.length +" books found for the shelf '" +exclusiveShelf +"'")
     filteredList
   }
-
+  //Move the book to another shelf
   def modifyShelf(l:Library) = {
+    //Select the right book
     println("Enter the title of the book you want to move : ")
     val rep = StdIn.readLine()
     val bookToMove = ServiceExploration.bookByTitle(rep, l)
 
+    //Select on which shelf we want to move it
     val newShelf = choosenShelf("Select the new shelf")
 
+    //Reset it in the book
     bookToMove.exclusiveShelf=newShelf
-
     println(bookToMove.title +" is now on the shelf : " +bookToMove.exclusiveShelf)
-
   }
-
 }

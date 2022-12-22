@@ -2,6 +2,7 @@ import scala.io.StdIn
 //import BookShelf._
 
 object ServiceExploration {
+  //Get all books according to the author's name
   def booksFromAuthor(a: String, lb: Library): Seq[Book] = {
     val aLower = a.toLowerCase()
     val filteredList = lb.listBooks.filter(x => x.author.name.toLowerCase().contains(aLower))
@@ -9,12 +10,14 @@ object ServiceExploration {
     filteredList
   }
 
+  //Get all books according to the title
   def booksByTitle(t: String, l: Library): Seq[Book] = {
     val tLower = t.toLowerCase()
     val filteredList = l.listBooks.filter(x => x.title.toLowerCase().contains(tLower))
     filteredList
   }
 
+  //Get one book according to it's title
   def bookByTitle(t:String, l: Library): Book = {
     val matchingBooks = booksByTitle(t,l)
 
@@ -23,7 +26,6 @@ object ServiceExploration {
       return null
     }
     if(matchingBooks.length > 1) then {
-
       println("More than one book found. Please select one : ")
       val mapping = matchingBooks.zipWithIndex.toMap
       for b <- mapping.toSeq.sortBy(_._2) do println(b._2 + 1 + ". " + b._1.title)
@@ -45,12 +47,10 @@ object ServiceExploration {
       book
     } else
       matchingBooks.head
-
-
   }
 
 
-  //number of read boods by author
+  //Number of read books by author
   def readBooksFromAuthor(an: String, l:Library): String = {
     //check if author exists
     val booksByAuthor = booksFromAuthor(an, l)
@@ -68,5 +68,4 @@ object ServiceExploration {
     val sortedList = listBooks.sortBy(b => b.myRating).reverse
     sortedList
   }
-
 }

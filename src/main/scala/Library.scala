@@ -1,55 +1,49 @@
+import org.fusesource.hawtjni.runtime.Library
+
 import scala.:+
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
+//Class that store every data loaded or created
 class Library(val name: String){
   var authorsList = Seq.empty[Author]
   var publishersList = Seq.empty[BookPublisher]
   var listBooks = Seq.empty[Book]
 
+  //Load everything before beginning program
+  def initLibrary = {
+    loadAuthors
+    loadPublishers
+    loadBooks
+  }
 
-  /*
-1.  a. from buffer : créer la liste des auteurs
-    b. modifier de val à toSeq ou map (pour pouvoir récupérer chaque auteur au besoin
-2.  a. from buffer : créer la liste des éditeurs
-    b. modifier de val à map pour récupérer pour chaque livre
-3.  a. idem si on veut pour CoAuthors
-4.  a. from buffer : créer la liste des livres avec le bon auteur et le bon éditeur
- */
-
+  // loading Authors
   def loadAuthors = {
     val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
 
     val authorsNameTemp = ListBuffer[String]()
 
-    /*
-  1 a. from buffer : create a list of authors' name without duplicate.
-                     Same for editor's name (publishers) */
-
+    //1a. from buffer : create a list of authors' name without duplicate.
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
 
-      //Check null here ??
       val authorName = cols(2)
       //if this author's name doesn't exist, then add it to the authorsNameTemp
       if !authorsNameTemp.contains(authorName) then authorsNameTemp += authorName
     }
-
-    bufferedSource.close // even if it is not closed, it seems not to be reusable later in the code. So might as well close it...
+    bufferedSource.close
 
     // 1 b. Create a List of all authors (objects) in purpose to reuse it when necessary. For instance when creating a book
     authorsNameTemp.toList // transform the ListBuffer into a list
 
-    //create a mutable list where add all authors
+    //1c. Create a mutable list where add all authors
     val authorsListBuffer = new ListBuffer[Author]()
-
     for (i <- authorsNameTemp) {
-      val author = Author(i)
+      val author = Author(i,0)
       authorsListBuffer.addOne(author)
     }
 
     authorsList = authorsListBuffer.toSeq
-
   }
 
   // loading Publishers
@@ -57,10 +51,7 @@ class Library(val name: String){
     val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
     val publishersNameTemp = ListBuffer[String]()
 
-    /*
-  1 a. from buffer : create a list of authors' name without duplicate.
-                     Same for editor's name (publishers)
-  */
+  //1a. from buffer : create a list of publisher's name without duplicate.
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
 
@@ -68,19 +59,17 @@ class Library(val name: String){
       //if this publisher's name doesn't exist, then add it to the publishersNameTemp
       if !publishersNameTemp.contains(publisherName) then publishersNameTemp += publisherName
     }
-    bufferedSource.close // even if it is not closed, it seems not to be reusable later in the code. So might as well close it...
+    bufferedSource.close
 
-    // 1 b. Create a List of all authors (objects) in purpose to reuse it when necessary. For instance when creating a book
+    // 1b. Create a List of all publishers (objects) in purpose to reuse it when necessary. For instance when creating a book
     publishersNameTemp.toList // transform the ListBuffer into a list
 
-    //create a mutable list where add all authors
+    // 1c. Create a mutable list where add all publishers
     val publishersListBuffer = new ListBuffer[BookPublisher]()
-
     for (i <- publishersNameTemp) {
-      val publisher = BookPublisher(i)
+      val publisher = BookPublisher(i,0)
       publishersListBuffer.addOne(publisher)
     }
-
     publishersList = publishersListBuffer.toSeq
   }
 
@@ -93,60 +82,59 @@ class Library(val name: String){
       var rating = 0
       var counter = 0
       var authorName = ""
-
       rating = myToInt(cols(7))
       counter = myToInt(cols(22))
       authorName = cols(2)
 
-      //get the author in authorList, according to his/her name
+      //get the author in authorList, according to his/her name & Create the author if doesn't exist yet
       val author = checkAuthor(authorName)
       addWrittenBookTo(author) // increments the number of written books for this author
-
+4
       //get the publisher from publishersList, according to his/her name
       val publisherName = cols(9)
       val publisher = checkPublisher(publisherName)
       addPublishedBookTo(publisher)
 
-      //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
-      var book = Book(cols(0), Some(cols(5)), cols(1), author, null, publisher, Some(cols(13)), counter, rating, null)
-      //add the shelf
+      var book = Book(cols(0), Some(cols(5)), cols(1), author, publisher, Some(cols(13)), counter, rating, null)
+      //add the corresponding shelf
       var bookExt = book.storeOnShelf(cols(18))
-
       if (!booksTemp.contains(book.idBook)) then
         booksTemp += bookExt
 
       bookExt = null
     }
-    println("Here we actually must have finished with books...")
+    println("All Data have been loaded now ! ")
     bufferedSourceForBooks.close
-
     listBooks = booksTemp.toSeq
   }
 
+  //Check that the object doesn't already exist in the list before adding it
   def checkAuthor(authorName: String): Author = {
-    var author = Author("")
+    var author = Author("",0)
     for (i <- authorsList) {
       if i.name.contains(authorName) then {
         author = i
       } else {
-        author = Author(authorName)
+        author = Author(authorName,0)
       }
     }
     author
   }
 
+  //Check that the object doesn't already exist in the list before adding it
   def checkPublisher(publisherName: String): BookPublisher = {
-    var publisher = BookPublisher("")
+    var publisher = BookPublisher("",0)
     for (i <- publishersList) {
       if i.name.contains(publisherName) then {
         publisher = i
       } else {
-        publisher = BookPublisher(publisherName)
+        publisher = BookPublisher(publisherName,0)
       }
     }
     publisher
   }
 
+  //To transform a string to an int
   def myToInt(s: String): Int = {
     try {
       s.toInt
