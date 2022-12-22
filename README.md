@@ -6,7 +6,7 @@ Developped by Gaétan Mottet & Mégane Solliard
 
 Our project was to execute several exploration and operations on the cvs GoodReadsLibrary, which contains data about books.
 
-We created a library class that contains 3 lists (data loaded from cvs) :
+We created a class Library that contains 3 lists (data from csv) :
   - authors list
   - publishers list
   - books list
