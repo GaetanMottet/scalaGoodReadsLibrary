@@ -11,14 +11,14 @@ class Library(val name: String){
   var listBooks = Seq.empty[Book]
 
   //Load everything before beginning program
-  def initLibrary = {
-    loadAuthors
-    loadPublishers
-    loadBooks
+  def initLibrary(): Unit = {
+    loadAuthors()
+    loadPublishers()
+    loadBooks()
   }
 
   // loading Authors
-  def loadAuthors = {
+  private def loadAuthors(): Unit = {
     val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
 
     val authorsNameTemp = ListBuffer[String]()
@@ -47,7 +47,7 @@ class Library(val name: String){
   }
 
   // loading Publishers
-  def loadPublishers = {
+  private def loadPublishers(): Unit = {
     val bufferedSource = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
     val publishersNameTemp = ListBuffer[String]()
 
@@ -73,7 +73,7 @@ class Library(val name: String){
     publishersList = publishersListBuffer.toSeq
   }
 
-  def loadBooks = {
+  private def loadBooks(): Unit = {
     val bufferedSourceForBooks = Source.fromFile("dataSource/03-GoodreadsLibraryExport.csv")
     val booksTemp = new ListBuffer[Book]()
     for (line <- bufferedSourceForBooks.getLines) {
@@ -89,7 +89,7 @@ class Library(val name: String){
       //get the author in authorList, according to his/her name & Create the author if doesn't exist yet
       val author = checkAuthor(authorName)
       addWrittenBookTo(author) // increments the number of written books for this author
-4
+
       //get the publisher from publishersList, according to his/her name
       val publisherName = cols(9)
       val publisher = checkPublisher(publisherName)
@@ -98,7 +98,7 @@ class Library(val name: String){
       var book = Book(cols(0), Some(cols(5)), cols(1), author, publisher, Some(cols(13)), counter, rating, null)
       //add the corresponding shelf
       var bookExt = book.storeOnShelf(cols(18))
-      if (!booksTemp.contains(book.idBook)) then
+      if !booksTemp.contains(book.idBook) then
         booksTemp += bookExt
 
       bookExt = null
