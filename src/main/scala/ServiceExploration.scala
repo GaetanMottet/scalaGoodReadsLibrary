@@ -1,35 +1,21 @@
-import BookShelf._
+//import BookShelf._
 
 object ServiceExploration {
-  def booksFromAuthor(a:String, l:List[Book])=
-    l.filter(x => x.author.name.contains(a))
+  def booksFromAuthor(a: String, lb: Library) =
+    val aLower = a.toLowerCase()
+    lb.listBooks.filter(x => x.author.name.toLowerCase().contains(aLower))
 
-  def booksFromAuthor(a: String, l: Seq[Book]) =
-    l.filter(x => x.author.name.contains(a))
-
-  def booksFromAuthor(a:Author, l:List[Book])=
-    l.filter(x => x.author.name.contains(a.name))
-
-  def booksFromAuthor(a: Author, l: Seq[Book]) =
-    l.filter(x => x.author.name.contains(a.name))
-
-  def bookByTitle(t:String, lb:List[Book])=
+  def bookByTitle(t:String, l: Library)=
     val tLower = t.toLowerCase()
-    lb.filter(x => x.title.toLowerCase().contains(tLower))
-
-  def bookByTitle(t: String, lb: Seq[Book]) =
-    val tLower = t.toLowerCase()
-    lb.filter(x => x.title.toLowerCase().contains(tLower))
+    l.listBooks.filter(x => x.title.toLowerCase().contains(tLower))
 
   //nbre livres lus par auteur
   def readBooksFromAuthor(an: String, l:Library): String = {
     //check if author exists
-    val listBooks = l.listBooks
-    val booksByAuthor = booksFromAuthor(an, listBooks)
+    val booksByAuthor = booksFromAuthor(an, l)
     if(booksByAuthor.length < 1) {
       return "Author not found or no book from this author"
     }
-
     //filter only read books
     val nbRead = booksByAuthor.filter(_.readCount > 0).map(_.readCount).length
     nbRead.toString
@@ -42,13 +28,19 @@ object ServiceExploration {
   }
 
 
-  //filtrer selon bookShelves
+  //filter by bookShelf
+/* ======================== DOESN'T WORK PROPERLY ==========================
   def filterByBookShelves(s: String, l: Library): Seq[Book] = {
     val listBooks = l.listBooks
     val sLower = s.toLowerCase()
-    val shelfEnum = withName(sLower)
-
+//    val shelfEnum = withName(sLower)
+    val shelfEnum = BookShelf.undefined
     listBooks.filter(b => b.exclusiveShelf == shelfEnum)
+  }*/
+
+  def filterByBookShelves(s: BookShelf, l: Library): Seq[Book] = {
+    val listBooks = l.listBooks
+    listBooks.filter(b => b.exclusiveShelf == s)
   }
 
 

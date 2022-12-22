@@ -29,35 +29,61 @@ def main(): Unit = {
   /* Create the list of books */
   goodReadsLibrary.loadBooks
 
+  println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  println("======================= Service EXPLORATION =======================")
+  println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  println("\n")
 
-  println("======================= Books with title containing 'Double Trouble' =======================")
-  val title = "Double Trouble"
-  val booksWithTitle = ServiceExploration.bookByTitle(title, goodReadsLibrary.listBooks)
+
+  println("\n======================= Books BY TITLE =======================")
+  val title = "Pride and Prejudice"
+  val booksWithTitle = ServiceExploration.bookByTitle(title, goodReadsLibrary)
   for i <-booksWithTitle do {
     println(i)
   }
 
   //looking for a book according to its author's name
-  println("======================= Books from Franklin W. Dixon =======================")
+  println("\n======================= Books FROM SPECIFIC AUTHOR =======================")
   val authorName = "Franklin W. Dixon"
-  val books = ServiceExploration.booksFromAuthor(authorName, goodReadsLibrary.listBooks)
-  for i <- books do {
-    println(i.title +" from " +i.author)
-  }
+  val books = ServiceExploration.booksFromAuthor(authorName, goodReadsLibrary)
+//  for i <- books do {
+//    println(i.title +" from " +i.author)
+//  }
 
   //number of books read from an specific author
-  println("Number of read books written by J.R.R : " +ServiceExploration.readBooksFromAuthor("dasdf", goodReadsLibrary))
+  println("\n======================= Books READ FROM SPECIFIC AUTHOR =======================")
+  println("Number of read books written by J.R.R : " +ServiceExploration.readBooksFromAuthor("J.R.r", goodReadsLibrary))
 
   //sort list books alphabetically
+  println("\n======================= ALL Books sorted alphabetically =======================")
   val sortedList = ServiceExploration.sortBooksByMyRating(goodReadsLibrary)
-
 //  for i <- sortedList do {
 //    println(i.title + " : " +i.myRating)
 //  }
 
   //test filter on BookShelf
-  val filteredByShelf = ServiceExploration.filterByBookShelves("read", goodReadsLibrary)
+  println("\n======================= Books by SHELF =======================")
+  val filteredByShelf = ServiceExploration.filterByBookShelves(BookShelf.read, goodReadsLibrary)
+//  for i <- filteredByShelf do println(i.title + " from the shelf : " +i.exclusiveShelf)
 
-  for i <- filteredByShelf do println(i.title + " " +i.exclusiveShelf)
+  println("\n")
+  println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  println("======================= Service OPERATIONS =======================")
+  println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+  println("\n")
+
+  println("\n======================= add a new book =======================")
+//  val myNewBook = ServiceOperations.addBook(goodReadsLibrary)
+//  println(myNewBook)
+
+  println("\n======================= average of ratings =======================")
+  val average = ServiceOperations.avgMyRatings(goodReadsLibrary)
+  print(average)
+
+  println("\n======================= increment the read count for a book =======================")
+  val bookToIncrement = ServiceExploration.bookByTitle("Pride and Prejudice", goodReadsLibrary)
+  ServiceOperations.incrementReadCount(bookToIncrement.head)
+
+
 
 }

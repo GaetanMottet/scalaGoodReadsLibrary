@@ -96,24 +96,13 @@ class Library(val name: String){
       if (cols(2).equals(" ")) then println("LDJKFASDFASD")
 
       //get the author in authorList, according to his/her name
-      var author = Author("")
-      for (i <- authorsList) {
-        if i.name.contains(authorName) then {
-          author = i
-          addWrittenBookTo(author)
-          //        i.nbBooks += 1 // increments the number of written books for this author
-        }
-      }
+      val author = checkAuthor(authorName)
+      addWrittenBookTo(author) // increments the number of written books for this author
 
       //get the publisher from publishersList, according to his/her name
       val publisherName = cols(9)
-      var publisher = BookPublisher("")
-      for (i <- publishersList) {
-        if i.name.contains(publisherName) then {
-          publisher = i
-          addPublishedBookTo(publisher)
-        }
-      }
+      val publisher = checkPublisher(publisherName)
+      addPublishedBookTo(publisher)
 
       //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
       val book = Book(cols(0), Some(cols(5)), cols(1), author, null, publisher, Some(cols(13)), counter, rating, null)
@@ -127,6 +116,30 @@ class Library(val name: String){
     bufferedSourceForBooks.close
 
     listBooks = booksTemp.toSeq
+  }
+
+  def checkAuthor(authorName: String): Author = {
+    var author = Author("")
+    for (i <- authorsList) {
+      if i.name.contains(authorName) then {
+        author = i
+      } else {
+        author = Author(authorName)
+      }
+    }
+    author
+  }
+
+  def checkPublisher(publisherName: String): BookPublisher = {
+    var publisher = BookPublisher("")
+    for (i <- publishersList) {
+      if i.name.contains(publisherName) then {
+        publisher = i
+      } else {
+        publisher = BookPublisher(publisherName)
+      }
+    }
+    publisher
   }
 
   def myToInt(s: String): Int = {

@@ -17,14 +17,15 @@ implicit class BookExt(b:Book):
   def evaluate(rate:Int) =
     b.copy(myRating = rate)
 
-//  def selectShelf(shelf:String) =
-//  shelf match {
-//    case "to-read" => BookShelf.toRead
-//    case "currently-reading" => BookShelf.currentlyReading
-//    case "read" => BookShelf.read
-//    case "dnf" => BookShelf.dnf
-//    case _ => BookShelf.undefined
-//  }
+  def selectShelf(shelf:String) =
+  shelf match {
+    case "to-read" => BookShelf.toRead
+    case "currently-reading" => BookShelf.currentlyReading
+    case "read" => BookShelf.read
+    case "dnf" => BookShelf.dnf
+    case _ => BookShelf.undefined
+  }
   def storeOnShelf(shelf:String) =
-    val shelfEnum = withName(shelf)
-    b.copy(exclusiveShelf = shelfEnum)
+    b.copy(exclusiveShelf = selectShelf(shelf))
+//    val shelfEnum = withName(shelf)
+//    b.copy(exclusiveShelf = shelfEnum)
