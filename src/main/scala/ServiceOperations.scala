@@ -154,7 +154,7 @@ object ServiceOperations {
   def selectBooksByShelf(l: Library): Seq[Book] = {
     val exclusiveShelf = choosenShelf("Choose the shelf to display :")
     val filteredList = l.listBooks.filter(_.exclusiveShelf == exclusiveShelf)
-    println(filteredList.length +" books found")
+    println(filteredList.length +" books found for the shelf '" +exclusiveShelf +"'")
     filteredList
   }
 

@@ -5,7 +5,7 @@ object ServiceExploration {
   def booksFromAuthor(a: String, lb: Library): Seq[Book] = {
     val aLower = a.toLowerCase()
     val filteredList = lb.listBooks.filter(x => x.author.name.toLowerCase().contains(aLower))
-    if(filteredList.isEmpty) then println("No book found")
+    if(filteredList.isEmpty) then println("No book found for this author")
     filteredList
   }
 
@@ -26,7 +26,7 @@ object ServiceExploration {
 
       println("More than one book found. Please select one : ")
       val mapping = matchingBooks.zipWithIndex.toMap
-      for b <- mapping do println(b._2 + 1 + ". " + b._1.title)
+      for b <- mapping.toSeq.sortBy(_._2) do println(b._2 + 1 + ". " + b._1.title)
       var valid = false
       var rep = 0
       while(valid != true) {

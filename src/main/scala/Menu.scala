@@ -31,7 +31,7 @@ object Menu {
       1 -> " 1. Search for a single book by its title (can be a partial title)",
       2 -> " 2. Search for all books by partial title (can be a list of books)",
       3 -> " 3. Search for all books from a specific author",
-      4 -> " 4. Search for all books you've read, by specific author",
+      4 -> " 4. Display the number of books you've read, by specific author",
       5 -> " 5. Display the list of your books, sort by your rating",
       6 -> " 6. Display the list of your books by a specific shelf",
       7 -> " 7. Add a book",
@@ -51,8 +51,13 @@ object Menu {
         case "2" => searchBooksByTitle(library)
         case "3" => searchBooksByAuthor(library)
         case "4" => searchReadBooksByAuthor(library)
-        case "5" => println(ServiceExploration.sortBooksByMyRating(library))
-        case "6" => ServiceOperations.selectBooksByShelf(library)
+        case "5" =>
+          val listBooks = ServiceExploration.sortBooksByMyRating(library)
+          for b <- listBooks do println("Your rate : " +b.myRating + " for " +b.title)
+
+        case "6" => 
+          val listBooks = ServiceOperations.selectBooksByShelf(library)
+          for b <- listBooks do println(b.title)
         case "7" => ServiceOperations.addBook(library)
         case "8" => println("Average of your ratings : " +ServiceOperations.avgMyRatings(library))
         case "9" => incrementBookReadCounter(library)
@@ -89,9 +94,8 @@ object Menu {
   def searchReadBooksByAuthor(library: Library): Unit = {
     println("Enter the name of the author you are looking for")
     val rep = StdIn.readLine()
-    val books = ServiceExploration.readBooksFromAuthor(rep, library)
-    println("Your books : ")
-    for b <- books do println(b)
+    val nbBooks = ServiceExploration.readBooksFromAuthor(rep, library)
+    println("Number of read books : " +nbBooks)
   }
 
   def incrementBookReadCounter(library: Library): Unit = {
@@ -107,7 +111,7 @@ object Menu {
     //2. modify rating
     book.myRating = ServiceOperations.askForModifyRating()
     //3. print the book
-    println(book)
+    println("the new rating is "+book.myRating +" for " +book)
   }
 
   def finish(): Unit = {
