@@ -90,10 +90,13 @@ class Library(val name: String){
     for (line <- bufferedSourceForBooks.getLines) {
       val cols = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).map(_.trim)
 
-      val rating = myToInt(cols(7))
-      val counter = myToInt(cols(22))
-      val authorName = cols(2)
-      if (cols(2).equals(" ")) then println("LDJKFASDFASD")
+      var rating = 0
+      var counter = 0
+      var authorName = ""
+
+      rating = myToInt(cols(7))
+      counter = myToInt(cols(22))
+      authorName = cols(2)
 
       //get the author in authorList, according to his/her name
       val author = checkAuthor(authorName)
@@ -105,12 +108,14 @@ class Library(val name: String){
       addPublishedBookTo(publisher)
 
       //book constructor needs : idBook, isbn, title, author, coAuthors:Seq[CoAuthor]=Seq.empty, publisher, originalPublicYear, readCount, myRating, exclusiveShelf:BookShelf
-      val book = Book(cols(0), Some(cols(5)), cols(1), author, null, publisher, Some(cols(13)), counter, rating, null)
+      var book = Book(cols(0), Some(cols(5)), cols(1), author, null, publisher, Some(cols(13)), counter, rating, null)
       //add the shelf
       var bookExt = book.storeOnShelf(cols(18))
 
       if (!booksTemp.contains(book.idBook)) then
         booksTemp += bookExt
+
+      bookExt = null
     }
     println("Here we actually must have finished with books...")
     bufferedSourceForBooks.close

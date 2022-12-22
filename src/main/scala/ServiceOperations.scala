@@ -73,34 +73,14 @@ object ServiceOperations {
 
      }
 
-
      //Get and check values entered for the rating
      val myRating = askForModifyRating()
 
-
      //Get the shelf where to put the book
-     println("Enter the shelf where to put your book :")
-     // display the list of BookShelf => user's choice
-     println("A. " + BookShelf.toRead)
-     println("B. " + BookShelf.currentlyReading)
-     println("C. " + BookShelf.read)
-     println("D. " + BookShelf.dnf)
-     println("E. " + BookShelf.undefined)
 
-     val shelfString = StdIn.readLine()
 
      // match case by user's choice
-     def choosenShelf(shelfString: String): BookShelf = {
-     shelfString.toUpperCase() match {
-       case "A" => BookShelf.toRead
-       case "B" => BookShelf.currentlyReading
-       case "C" => BookShelf.read
-       case "D" => BookShelf.dnf
-       case _ => BookShelf.undefined // case of E or other than A,B,C,D
-       }
-     }
-
-    val exclusiveShelf = choosenShelf(shelfString)
+    val exclusiveShelf = choosenShelf("Enter the shelf where to put your book :")
 
     val b = Book(idBook: String, Option(isbn), title, author, null, publisher, Option(publicYear), readCount, myRating, exclusiveShelf)
 
@@ -116,21 +96,43 @@ object ServiceOperations {
    //moyenne des MyRatings
    def avgMyRatings(l: Library): Double = {
      val listBooks = l.listBooks.filter(_.readCount > 0)
-     var sum = 0.0
-     for(b <- listBooks) do sum += b.myRating
-     sum/listBooks.length
-
+     val myRatings = listBooks.map(b => b.myRating)
+     val sum = myRatings.reduce((x,y) => x+y)
+     ((x:Double) => x/listBooks.length)(sum)
    }
+
+  def choosenShelf(question: String): BookShelf = {
+
+    println(question)
+    // display the list of BookShelf => user's choice
+    println("A. " + BookShelf.toRead)
+    println("B. " + BookShelf.currentlyReading)
+    println("C. " + BookShelf.read)
+    println("D. " + BookShelf.dnf)
+    println("E. " + BookShelf.undefined)
+
+    val shelfString = StdIn.readLine()
+
+    shelfString.toUpperCase() match {
+      case "A" => BookShelf.toRead
+      case "B" => BookShelf.currentlyReading
+      case "C" => BookShelf.read
+      case "D" => BookShelf.dnf
+      case _ => BookShelf.undefined // case of E or other than A,B,C,D
+    }
+  }
+
 
 
    //augmenter readCount
    def incrementReadCount(b: Book) = {
-     b.incrementReadCount()
+     b.readCount += 1
      println("The book '" +b.title + " has been read " +b.readCount)
      println("Do you want to reevaluate your rating ? Y/N")
      val rep = StdIn.readLine()
      rep.toUpperCase match {
-       case "Y" => b.evaluate(askForModifyRating())
+       case "Y" => b.myRating=askForModifyRating()
+       case _ => //do nothing
      }
      println("The book '" +b.title + " has been read " +b.readCount +" time(s) and has a rate of " +b.myRating)
    }
@@ -148,6 +150,25 @@ object ServiceOperations {
      myRatingToCheck
    }
 
-  //Afficher ExclusiveShelf "to-read"
+  //Display books from a specific shelf
+  def selectBooksByShelf(l: Library): Seq[Book] = {
+    val exclusiveShelf = choosenShelf("Choose the shelf to display :")
+    val filteredList = l.listBooks.filter(_.exclusiveShelf == exclusiveShelf)
+    println(filteredList.length +" books found")
+    filteredList
+  }
+
+  def modifyShelf(l:Library) = {
+    println("Enter the title of the book you want to move : ")
+    val rep = StdIn.readLine()
+    val bookToMove = ServiceExploration.bookByTitle(rep, l)
+
+    val newShelf = choosenShelf("Select the new shelf")
+
+    bookToMove.exclusiveShelf=newShelf
+
+    println(bookToMove.title +" is now on the shelf : " +bookToMove.exclusiveShelf)
+
+  }
 
 }

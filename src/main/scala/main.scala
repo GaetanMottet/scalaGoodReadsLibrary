@@ -1,7 +1,6 @@
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
-import org.glassfish.jersey.internal.jsr166.Flow.Publisher
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -10,25 +9,19 @@ import scala.util.control.Breaks.break
 
 @main
 def main(): Unit = {
-  println("Hello world!")
-
-  def myToInt(s: String): Int = {
-    try {
-      s.toInt
-    } catch {
-      case e: Exception => 0
-    }
-  }
 
   val goodReadsLibrary = new Library("GoodReads Library")
 
-  // loading data from .csv
+  // loading data from .csv and build authors and publishers objects
   goodReadsLibrary.loadAuthors
   goodReadsLibrary.loadPublishers
 
   /* Create the list of books */
   goodReadsLibrary.loadBooks
 
+  Menu.displayMenu(goodReadsLibrary)
+
+  println("\n\n")
   println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
   println("======================= Service EXPLORATION =======================")
   println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -36,8 +29,8 @@ def main(): Unit = {
 
 
   println("\n======================= Books BY TITLE =======================")
-  val title = "Pride and Prejudice"
-  val booksWithTitle = ServiceExploration.bookByTitle(title, goodReadsLibrary)
+  val title = "Double"
+  val booksWithTitle = ServiceExploration.booksByTitle(title, goodReadsLibrary)
   for i <-booksWithTitle do {
     println(i)
   }
@@ -61,11 +54,6 @@ def main(): Unit = {
 //    println(i.title + " : " +i.myRating)
 //  }
 
-  //test filter on BookShelf
-  println("\n======================= Books by SHELF =======================")
-  val filteredByShelf = ServiceExploration.filterByBookShelves(BookShelf.read, goodReadsLibrary)
-//  for i <- filteredByShelf do println(i.title + " from the shelf : " +i.exclusiveShelf)
-
   println("\n")
   println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
   println("======================= Service OPERATIONS =======================")
@@ -81,9 +69,18 @@ def main(): Unit = {
   print(average)
 
   println("\n======================= increment the read count for a book =======================")
-  val bookToIncrement = ServiceExploration.bookByTitle("Pride and Prejudice", goodReadsLibrary)
-  ServiceOperations.incrementReadCount(bookToIncrement.head)
+//  val bookToIncrement = ServiceExploration.bookByTitle("Pride and Prejudice", goodReadsLibrary)
+//  ServiceOperations.incrementReadCount(bookToIncrement)
+
+  println("\n======================= Display books from a specific shelf =======================")
+//  val booksFromShelf = ServiceOperations.selectBooksByShelf(goodReadsLibrary)
+//  for b <- booksFromShelf do println(b)
+
+  println("\n======================= Change the shelf of a book =======================")
+  ServiceOperations.modifyShelf(goodReadsLibrary)
 
 
+  println("\n======================= Verification =======================")
+  print(ServiceExploration.bookByTitle("Foundation (Foundation, #1)", goodReadsLibrary))
 
 }
