@@ -11,7 +11,7 @@ We created a library class that contains 3 lists (data loaded from cvs) :
   - publishers list
   - books list
 
-We also created a trait Person with 2 case class extending this trait : Auhor & BookPublisher
+We also created a trait Person with 2 case class extending this trait : Author & BookPublisher
 
 So for the case class book we were able to add an Author and a Publisher as well as importants details about the book :
   - id
